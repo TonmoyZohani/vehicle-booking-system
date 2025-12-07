@@ -53,7 +53,7 @@ const signInUser = async (req: Request, res: Response) => {
   try {
     const result = await authServices.signInUser(email, password);
     res.status(200).json({
-      success: false,
+      success: true,
       message: "Login successful",
       data: result,
     });

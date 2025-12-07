@@ -1,8 +1,6 @@
 # Vehicle Booking System
 
 ## Live URL
-#### Interface
-<p>TypeScript–এ interface খুব সহজেই অন্য interface বা এমনকি type কে extend করতে পারে। অর্থাৎ, নতুন interface তৈরি করার সময় আগের interface এর প্রপার্টিগুলো নিয়ে আরও নতুন প্রপার্টি যোগ করা যায়।</p>
 
 
 ## Features
