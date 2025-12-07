@@ -1,15 +1,13 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { userControllers } from "./user.controller";
 import logger from "../../middleware/logger";
 import auth from "../../middleware/auth";
 
 const router = express.Router();
 
-// router.get("/", logger, auth("admin"), userControllers.getUser);
-router.get("/", userControllers.getUser);
 
-router.put("/:userId", userControllers.updateUser);
-
-router.delete("/:userId", userControllers.deleteUser);
+router.get("/", logger, auth("admin"), userControllers.getUser);
+router.put("/:userId", logger, userControllers.updateUser);
+router.delete("/:userId", logger, auth("admin"), userControllers.deleteUser);
 
 export const userRoutes = router;
