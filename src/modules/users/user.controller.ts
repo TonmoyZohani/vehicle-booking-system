@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { userServices } from "./user.service";
 
-// Note: createUser should not exist - use auth/signup instead
 const getUser = async (req: Request, res: Response) => {
   try {
     const result = await userServices.getUser();
@@ -24,13 +23,19 @@ const getUser = async (req: Request, res: Response) => {
 };
 
 
-
 const updateUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const updateData = req.body;
   
   try {
     const authenticatedUser = (req as any).user;
+    
+    if (!authenticatedUser) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
     
     if (authenticatedUser.role !== 'admin' && authenticatedUser.userId !== userId) {
       return res.status(403).json({
@@ -82,7 +87,6 @@ const deleteUser = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
-      data: result,
     });
   } catch (err: any) {
     if (err.message.includes('not found')) {
