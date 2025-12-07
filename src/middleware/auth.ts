@@ -29,7 +29,7 @@ const auth = (...roles: string[]) => {
       if (roles.length && !roles.includes(decoded.role as string)) {
         return res.status(403).json({
           success: false,
-          message: "You are not authorized to access this resource!",
+          message: "You are not authorized",
         });
       }
 

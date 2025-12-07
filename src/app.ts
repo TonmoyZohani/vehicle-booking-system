@@ -12,7 +12,7 @@ app.use(express.json());
 initDB();
 
 app.get("/", logger, (req: Request, res: Response) => {
-  res.send("Hello Next Level Developers!");
+  res.send("Welcome to the Vehicle Booking System");
 });
 
 app.use("/api/v1/auth", authRoutes);

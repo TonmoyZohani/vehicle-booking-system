@@ -5,9 +5,8 @@ const getUser = async (req: Request, res: Response) => {
   try {
     const result = await userServices.getUser();
 
-    const message = result.length > 0 
-      ? "Users retrieved successfully" 
-      : "No users found";
+    const message =
+      result.length > 0 ? "Users retrieved successfully" : "No users found";
 
     res.status(200).json({
       success: true,
@@ -22,11 +21,10 @@ const getUser = async (req: Request, res: Response) => {
   }
 };
 
-
 const updateUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const updateData = req.body;
-  
+
   try {
     const authenticatedUser = (req as any).user;
     
@@ -36,15 +34,18 @@ const updateUser = async (req: Request, res: Response) => {
         message: "Authentication required",
       });
     }
-    
-    if (authenticatedUser.role !== 'admin' && authenticatedUser.userId !== userId) {
+
+    if (
+      authenticatedUser.role !== "admin" &&
+      authenticatedUser.userId != userId
+    ) {
       return res.status(403).json({
         success: false,
         message: "You can only update your own profile",
       });
     }
-    
-    if (updateData.role && authenticatedUser.role !== 'admin') {
+
+    if (updateData.role && authenticatedUser.role !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Only admin can change user roles",
@@ -59,13 +60,13 @@ const updateUser = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    if (err.message.includes('not found')) {
+    if (err.message.includes("not found")) {
       return res.status(404).json({
         success: false,
         message: err.message,
       });
     }
-    if (err.message.includes('already exists')) {
+    if (err.message.includes("already exists")) {
       return res.status(409).json({
         success: false,
         message: err.message,
@@ -89,13 +90,13 @@ const deleteUser = async (req: Request, res: Response) => {
       message: "User deleted successfully",
     });
   } catch (err: any) {
-    if (err.message.includes('not found')) {
+    if (err.message.includes("not found")) {
       return res.status(404).json({
         success: false,
         message: err.message,
       });
     }
-    if (err.message.includes('active bookings')) {
+    if (err.message.includes("active bookings")) {
       return res.status(400).json({
         success: false,
         message: err.message,
