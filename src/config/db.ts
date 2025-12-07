@@ -45,8 +45,6 @@ const initDB = async () => {
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `);
-  
-  console.log('✅ All tables created successfully');
 };
 
 export default initDB;
