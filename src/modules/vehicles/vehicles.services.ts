@@ -6,7 +6,7 @@ const createVehicle = async (payload: Record<string, unknown>) => {
     type,
     registration_number,
     daily_rent_price,
-    availability_status = "available", 
+    availability_status = "available",
   } = payload;
 
   const existingVehicle = await pool.query(
@@ -58,6 +58,7 @@ const updateVehicle = async (
   vehicleId: string,
   payload: Record<string, unknown>
 ) => {
+ 
   const {
     vehicle_name,
     type,
@@ -66,22 +67,36 @@ const updateVehicle = async (
     availability_status,
   } = payload;
 
-  const duplicateReg = await pool.query(
-    `SELECT * FROM vehicles WHERE registration_number = $1 AND id != $2`,
-    [registration_number, vehicleId]
-  );
-  
-  if (duplicateReg.rows.length > 0) {
-    throw new Error("Registration number already exists for another vehicle");
+  if (registration_number) {
+    const currentVehicle = await pool.query(
+      `SELECT registration_number FROM vehicles WHERE id = $1`,
+      [vehicleId]
+    );
+
+    if (
+      currentVehicle.rows.length > 0 &&
+      currentVehicle.rows[0].registration_number !== registration_number
+    ) {
+      const duplicateReg = await pool.query(
+        `SELECT * FROM vehicles WHERE registration_number = $1 AND id != $2`,
+        [registration_number, vehicleId]
+      );
+
+      if (duplicateReg.rows.length > 0) {
+        throw new Error(
+          "Registration number already exists for another vehicle"
+        );
+      }
+    }
   }
 
   const query = `
     UPDATE vehicles 
-    SET vehicle_name = $1, 
-        type = $2, 
-        registration_number = $3, 
-        daily_rent_price = $4, 
-        availability_status = $5,
+    SET vehicle_name = COALESCE($1, vehicle_name), 
+        type = COALESCE($2, type), 
+        registration_number = COALESCE($3, registration_number), 
+        daily_rent_price = COALESCE($4, daily_rent_price), 
+        availability_status = COALESCE($5, availability_status),
         updated_at = NOW()
     WHERE id = $6
     RETURNING id, vehicle_name, type, registration_number, daily_rent_price, availability_status, created_at, updated_at
@@ -104,7 +119,6 @@ const updateVehicle = async (
 };
 
 const deleteVehicle = async (vehicleId: string) => {
- 
   const existingVehicle = await pool.query(
     `SELECT * FROM vehicles WHERE id = $1`,
     [vehicleId]
@@ -129,7 +143,6 @@ const deleteVehicle = async (vehicleId: string) => {
     [vehicleId]
   );
 
-  return result.rows[0];
 };
 
 export const vehicleServices = {

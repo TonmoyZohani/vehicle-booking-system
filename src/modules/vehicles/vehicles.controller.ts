@@ -11,7 +11,7 @@ const createVehicle = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    if (err.message.includes('already exists')) {
+    if (err.message.includes("already exists")) {
       return res.status(409).json({
         success: false,
         message: err.message,
@@ -28,9 +28,10 @@ const getVehicle = async (req: Request, res: Response) => {
   try {
     const result = await vehicleServices.getVehicle();
 
-    const message = result.length > 0 
-      ? "Vehicles retrieved successfully" 
-      : "No vehicles found";
+    const message =
+      result.length > 0
+        ? "Vehicles retrieved successfully"
+        : "No vehicles found";
 
     res.status(200).json({
       success: true,
@@ -46,7 +47,7 @@ const getVehicle = async (req: Request, res: Response) => {
 };
 
 const getSingleVehicle = async (req: Request, res: Response) => {
-  const { vehicleId } = req.params; 
+  const { vehicleId } = req.params;
 
   try {
     const result = await vehicleServices.getSingleVehicle(vehicleId!);
@@ -74,7 +75,10 @@ const getSingleVehicle = async (req: Request, res: Response) => {
 const updateVehicle = async (req: Request, res: Response) => {
   const { vehicleId } = req.params;
   const updateData = req.body;
-  
+
+  console.log(req.body);
+  console.log(vehicleId)
+
   try {
     const result = await vehicleServices.updateVehicle(vehicleId!, updateData);
 
@@ -84,7 +88,7 @@ const updateVehicle = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    if (err.message.includes('not found')) {
+    if (err.message.includes("not found")) {
       return res.status(404).json({
         success: false,
         message: err.message,
@@ -106,16 +110,15 @@ const deleteVehicle = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Vehicle deleted successfully",
-      data: result,
     });
   } catch (err: any) {
-    if (err.message.includes('active bookings')) {
+    if (err.message.includes("active bookings")) {
       return res.status(400).json({
         success: false,
         message: err.message,
       });
     }
-    if (err.message.includes('not found')) {
+    if (err.message.includes("not found")) {
       return res.status(404).json({
         success: false,
         message: err.message,
