@@ -10,20 +10,33 @@ const signUpUser = async (
   phone: string,
   role: string
 ) => {
+  const lowerCaseEmail = email.toLowerCase();
+
+  if (password.length < 6) {
+    throw new Error("Password must be at least 6 characters");
+  }
+
+  if (role && !["admin", "customer"].includes(role)) {
+    throw new Error('Role must be either "admin" or "customer"');
+  }
+
   const result = await pool.query(`SELECT * FROM users WHERE email=$1`, [
-    email,
+    lowerCaseEmail,
   ]);
+
   if (result.rows.length > 0) {
     return null;
   }
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  const query = `INSERT INTO users (name,email,password,phone,role) 
-                 VALUES ($1,$2,$3,$4,$5) 
-                 RETURNING id, name, email, phone, role`;
+
+  const query = `INSERT INTO users (name, email, password, phone, role) 
+                 VALUES ($1, $2, $3, $4, $5) 
+                 RETURNING id, name, email, phone, role, created_at`;
 
   const data = await pool.query(query, [
     name,
-    email,
+    lowerCaseEmail,
     hashedPassword,
     phone,
     role,
@@ -56,7 +69,7 @@ const signInUser = async (email: string, password: string) => {
       expiresIn: "7d",
     }
   );
-  
+
   return { token, user };
 };
 

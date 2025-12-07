@@ -2,7 +2,15 @@ import { Request, Response } from "express";
 import { authServices } from "./auth.service";
 
 const signUpUser = async (req: Request, res: Response) => {
-  const { name, email, password, phone, role } = req.body;
+  const { name, email, password, phone, role = 'customer' } = req.body;
+
+  if (!name || !email || !password || !phone) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields: name, email, password, phone",
+    });
+  }
+
   try {
     const result = await authServices.signUpUser(
       name,
@@ -12,10 +20,8 @@ const signUpUser = async (req: Request, res: Response) => {
       role
     );
 
-    console.log("Result", result);
-
     if (!result) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: "User already exists",
       });
@@ -27,6 +33,13 @@ const signUpUser = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
+    if (err.message.includes('must be') || err.message.includes('required')) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: err.message,
