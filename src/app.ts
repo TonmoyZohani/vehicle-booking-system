@@ -5,6 +5,7 @@ import logger from "./middleware/logger";
 import { userRoutes } from "./modules/users/user.routes";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { vehicleRoutes } from "./modules/vehicles/vehicles.routes";
+import { bookingsRoutes } from "./modules/bookings/bookings.routes";
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.get("/", logger, (req: Request, res: Response) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/vehicles", vehicleRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/bookings", bookingsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
